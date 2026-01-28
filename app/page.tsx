@@ -76,15 +76,13 @@ export default function BriefPage() {
         <div className="mx-auto flex w-full max-w-[760px] items-center justify-between px-5 py-4">
           <div className="flex items-center gap-4">
             {/* Logo */}
-            <div className="relative h-10 w-[170px]">
-              <Image
-                src="/logo.png"
-                alt="Piero Beghi Photography"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
+<Image
+  src="/logo.png"
+  alt="Piero Beghi Photography"
+  width={260}
+  height={60}
+  priority
+/>
 
             {/* micro accent */}
             <div className="hidden md:block h-5 w-px bg-[#DED9CF]" />
