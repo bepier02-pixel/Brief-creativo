@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 const ACCENT = "#B89B5E";
 
-type Usage = "social" | "portfolio" | "casting" | "personalBrand" | "other";
-type LocationPref = "studio" | "outdoor" | "indoor" | "undecided";
+type Usage = "social" | "portfolio" | "personalBrand" | "other";
+type LocationPref = "studio" | "outdoor" | "undecided";
 type Timing = "asap" | "2weeks" | "1month" | "flexible";
 
 export default function BriefStep2Page() {
@@ -16,6 +16,9 @@ export default function BriefStep2Page() {
   const [location, setLocation] = useState<LocationPref | null>(null);
   const [timing, setTiming] = useState<Timing | null>(null);
   const [mood, setMood] = useState<string>("");
+
+  // Allegati (preview locale)
+  const [files, setFiles] = useState<File[]>([]);
 
   const canContinue = useMemo(() => {
     return Boolean(usage && location && timing);
@@ -93,10 +96,7 @@ export default function BriefStep2Page() {
         {/* linea accent */}
         <div className="pt-2">
           <div className="h-px w-28 bg-[#DED9CF]" />
-          <div
-            className="-mt-px h-[2px] w-10"
-            style={{ background: ACCENT }}
-          />
+          <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
         </div>
       </div>
 
@@ -125,12 +125,6 @@ export default function BriefStep2Page() {
             onClick={() => setUsage("portfolio")}
           />
           <ChoiceCard
-            selected={usage === "casting"}
-            title="Casting / agenzia"
-            desc="Immagini più tecniche, leggibili e coerenti con gli standard."
-            onClick={() => setUsage("casting")}
-          />
-          <ChoiceCard
             selected={usage === "personalBrand"}
             title="Brand personale / lavoro"
             desc="Immagini professionali per sito, LinkedIn o comunicazione business."
@@ -139,7 +133,7 @@ export default function BriefStep2Page() {
           <ChoiceCard
             selected={usage === "other"}
             title="Altro"
-            desc="Se l’obiettivo è diverso, scegli questa opzione e descrivilo sotto."
+            desc="Se l’obiettivo è diverso, descrivilo nelle note sotto."
             onClick={() => setUsage("other")}
           />
         </div>
@@ -152,7 +146,7 @@ export default function BriefStep2Page() {
             Hai già una preferenza sul luogo?
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Va bene anche “non so ancora”.
+            Va bene anche “non ho deciso”.
           </div>
         </div>
 
@@ -168,12 +162,6 @@ export default function BriefStep2Page() {
             title="Esterni"
             desc="Atmosfera naturale, ambienti urbani o paesaggio."
             onClick={() => setLocation("outdoor")}
-          />
-          <ChoiceCard
-            selected={location === "indoor"}
-            title="Interni"
-            desc="Casa, location, hotel o spazi particolari."
-            onClick={() => setLocation("indoor")}
           />
           <ChoiceCard
             selected={location === "undecided"}
@@ -224,14 +212,14 @@ export default function BriefStep2Page() {
       </section>
 
       {/* 4) Mood / riferimenti */}
-      <section className="space-y-3">
+      <section className="space-y-4">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
             Mood, stile o riferimenti (facoltativo)
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Puoi descrivere lo stile che ami, o incollare link (Pinterest,
-            Instagram, siti).
+            Puoi descrivere lo stile che ami. Se vuoi, puoi anche caricare alcune
+            immagini di riferimento.
           </div>
         </div>
 
@@ -239,9 +227,63 @@ export default function BriefStep2Page() {
           value={mood}
           onChange={(e) => setMood(e.target.value)}
           rows={5}
-          placeholder="Esempio: luce morbida, mood editoriale, toni caldi… Link: https://..."
+          placeholder="Esempio: luce morbida, mood editoriale, toni caldi…"
           className="w-full rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] px-5 py-4 text-[14.5px] leading-7 text-[#0F0F0F] placeholder:text-[#9A9A9A] focus:outline-none focus:ring-2 focus:ring-black/10"
         />
+
+        {/* Upload immagini (preview locale) */}
+        <div className="space-y-2">
+          <div className="text-[13.5px] text-[#6F6F6F]">
+            Allegati (facoltativi) — immagini JPG/PNG/WEBP
+          </div>
+
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => {
+              const list = Array.from(e.target.files ?? []);
+              setFiles(list);
+            }}
+            className="block w-full text-sm text-[#6F6F6F]
+              file:mr-4 file:rounded-lg file:border-0
+              file:bg-[#0F0F0F] file:px-4 file:py-2
+              file:text-sm file:text-[#F6F4EF]
+              hover:file:opacity-90"
+          />
+
+          {files.length > 0 && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {files.slice(0, 6).map((f) => {
+                const url = URL.createObjectURL(f);
+                return (
+                  <div
+                    key={f.name}
+                    className="rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] p-3"
+                  >
+                    {/* preview */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt={f.name}
+                      className="h-40 w-full rounded-[14px] object-cover"
+                      onLoad={() => URL.revokeObjectURL(url)}
+                    />
+                    <div className="mt-2 truncate text-xs text-[#6F6F6F]">
+                      {f.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {files.length > 6 && (
+            <div className="text-xs text-[#6F6F6F]">
+              Mostro le prime 6 immagini. Le altre verranno comunque considerate.
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Footer */}
