@@ -1,13 +1,16 @@
+
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Purpose = "personal" | "casting";
 
 const ACCENT = "#B89B5E"; // oro caldo (accento brand)
 
 export default function BriefPage() {
+  const router = useRouter();
   const [purpose, setPurpose] = useState<Purpose | null>(null);
 
   const Card = ({
@@ -46,7 +49,7 @@ export default function BriefPage() {
               <p className="text-[14.5px] leading-7 text-[#6F6F6F]">{desc}</p>
             </div>
 
-            {/* indicatore selezione (accento) */}
+            {/* indicatore selezione */}
             <div className="flex items-center gap-2 pt-1">
               <div
                 className="h-2 w-2 rounded-full"
@@ -71,27 +74,23 @@ export default function BriefPage() {
 
   return (
     <div className="min-h-screen bg-[#F6F4EF] text-[#0F0F0F]">
-      {/* Header brand */}
+      {/* Header */}
       <header className="sticky top-0 z-10 border-b border-[#DED9CF] bg-[#F6F4EF]/90 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-[760px] items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-4">
-            {/* Logo */}
-            <div className="shrink-0">
-              <Image
-                src="/logo.png"
-                alt="Piero Beghi Photography"
-                width={260}
-                height={60}
-                priority
-              />
-            </div>
+        <div className="mx-auto flex w-full max-w-[760px] items-center justify-between px-5 py-5">
+          <div className="shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Piero Beghi Photography"
+              width={260}
+              height={60}
+              priority
+            />
           </div>
 
           <div className="text-xs tracking-wide text-[#7A7A7A]">
             PASSO <span className="text-[#0F0F0F]/70">1</span> / 6
           </div>
         </div>
-
       </header>
 
       <main className="mx-auto w-full max-w-[760px] px-5 py-10 md:py-14">
@@ -135,10 +134,13 @@ export default function BriefPage() {
             <button
               type="button"
               disabled={!purpose}
+              onClick={() => router.push("/brief/step-2")}
               className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
               style={{
                 background: "#0F0F0F",
-                boxShadow: purpose ? "0 14px 40px rgba(15,15,15,0.18)" : "none",
+                boxShadow: purpose
+                  ? "0 14px 40px rgba(15,15,15,0.18)"
+                  : "none",
               }}
             >
               Continua
