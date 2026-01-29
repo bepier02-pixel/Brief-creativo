@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadBriefDraft, updateBriefDraft } from "../_lib/briefStore";
 
 const ACCENT = "#B89B5E";
 
@@ -15,9 +16,23 @@ export default function BriefStep2Page() {
   const [location, setLocation] = useState<LocationPref | null>(null);
   const [mood, setMood] = useState<string>("");
 
-  const canContinue = useMemo(() => {
-    return Boolean(usage && location);
-  }, [usage, location]);
+  // ✅ carica dati salvati
+  useEffect(() => {
+    const draft = loadBriefDraft();
+    if (draft.step2) {
+      setUsage(draft.step2.usage ?? null);
+      setLocation(draft.step2.location ?? null);
+      setMood(draft.step2.mood ?? "");
+    }
+  }, []);
+
+  const canContinue = useMemo(() => Boolean(usage && location), [usage, location]);
+
+  function persist() {
+    updateBriefDraft({
+      step2: { usage, location, mood },
+    });
+  }
 
   const ChoiceCard = ({
     selected,
@@ -84,11 +99,9 @@ export default function BriefStep2Page() {
           Definiamo il risultato che vuoi ottenere
         </h1>
         <p className="max-w-[70ch] text-[15.5px] leading-7 text-[#6F6F6F]">
-          Mi aiuta a capire lo stile, le scelte di set e cosa consegnarti in modo
-          più efficace.
+          Mi aiuta a capire lo stile, le scelte di set e cosa consegnarti in modo più efficace.
         </p>
 
-        {/* linea accent */}
         <div className="pt-2">
           <div className="h-px w-28 bg-[#DED9CF]" />
           <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
@@ -174,8 +187,7 @@ export default function BriefStep2Page() {
             Mood e stile (facoltativo)
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Se ti va, descrivi l’atmosfera che immagini (luce, emozione, energia,
-            tipo di immagini).
+            Se ti va, descrivi l’atmosfera che immagini (luce, emozione, energia).
           </div>
         </div>
 
@@ -192,7 +204,10 @@ export default function BriefStep2Page() {
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
-          onClick={() => router.push("/brief")}
+          onClick={() => {
+            persist();
+            router.push("/brief");
+          }}
           className="rounded-lg px-5 py-3 text-sm text-[#0F0F0F] transition hover:opacity-80"
           style={{
             border: "1px solid rgba(15,15,15,0.12)",
@@ -205,13 +220,14 @@ export default function BriefStep2Page() {
         <button
           type="button"
           disabled={!canContinue}
-          onClick={() => router.push("/brief/step-3")}
+          onClick={() => {
+            persist();
+            router.push("/brief/step-3");
+          }}
           className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
           style={{
             background: "#0F0F0F",
-            boxShadow: canContinue
-              ? "0 14px 40px rgba(15,15,15,0.18)"
-              : "none",
+            boxShadow: canContinue ? "0 14px 40px rgba(15,15,15,0.18)" : "none",
           }}
         >
           Continua

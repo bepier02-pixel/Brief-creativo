@@ -1,23 +1,44 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadBriefDraft, updateBriefDraft } from "../_lib/briefStore";
 
 const ACCENT = "#B89B5E";
 
-type DayPref = "sunday" | "monday";
-type PeriodPref = "thisMonth" | "nextMonth" | "twoThreeMonths" | "toDefine";
+type Timeframe = "this_month" | "next_months" | "specific_date";
 
 export default function BriefStep3Page() {
   const router = useRouter();
 
-  const [day, setDay] = useState<DayPref | null>(null);
-  const [period, setPeriod] = useState<PeriodPref | null>(null);
-  const [notes, setNotes] = useState<string>("");
+  const [timeframe, setTimeframe] = useState<Timeframe | null>(null);
+  const [specificDate, setSpecificDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    const draft = loadBriefDraft();
+    if (draft.step3) {
+      setTimeframe(draft.step3.timeframe ?? null);
+      setSpecificDate(draft.step3.specificDate ?? "");
+      setNotes(draft.step3.notes ?? "");
+    }
+  }, []);
 
   const canContinue = useMemo(() => {
-    return Boolean(day && period);
-  }, [day, period]);
+    if (!timeframe) return false;
+    if (timeframe === "specific_date") return Boolean(specificDate);
+    return true;
+  }, [timeframe, specificDate]);
+
+  function persist() {
+    updateBriefDraft({
+      step3: {
+        timeframe,
+        specificDate,
+        notes,
+      },
+    });
+  }
 
   const ChoiceCard = ({
     selected,
@@ -78,114 +99,73 @@ export default function BriefStep3Page() {
 
   return (
     <div className="space-y-10">
-      {/* Titolo */}
       <div className="space-y-3">
         <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
-          Disponibilità e periodo
+          Tempistiche
         </h1>
-        <p className="max-w-[75ch] text-[15.5px] leading-7 text-[#6F6F6F]">
-          Lavoro prevalentemente in studio. Di norma gli shooting li tengo la
-          domenica e il lunedì. Fammi sapere cosa preferisci.
+        <p className="max-w-[70ch] text-[15.5px] leading-7 text-[#6F6F6F]">
+          Seleziona il periodo preferito. È solo un’indicazione, poi ci organizziamo insieme.
         </p>
 
-        {/* linea accent */}
         <div className="pt-2">
           <div className="h-px w-28 bg-[#DED9CF]" />
           <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
         </div>
       </div>
 
-      {/* 1) Giorno */}
       <section className="space-y-4">
-        <div className="space-y-1">
-          <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Scegli il giorno
-          </div>
-          <div className="text-[13.5px] text-[#6F6F6F]">
-            Seleziona quello che preferisci.
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <ChoiceCard
-            selected={day === "sunday"}
-            title="Domenica"
-            desc="Disponibilità principale."
-            onClick={() => setDay("sunday")}
-          />
-          <ChoiceCard
-            selected={day === "monday"}
-            title="Lunedì"
-            desc="Disponibilità principale."
-            onClick={() => setDay("monday")}
-          />
-        </div>
-      </section>
-
-      {/* 2) Periodo */}
-      <section className="space-y-4">
-        <div className="space-y-1">
-          <div className="text-[15px] font-medium text-[#0F0F0F]">
-            In quale periodo vorresti farlo?
-          </div>
-          <div className="text-[13.5px] text-[#6F6F6F]">
-            Anche una stima va benissimo.
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <ChoiceCard
-            selected={period === "thisMonth"}
+            selected={timeframe === "this_month"}
             title="Questo mese"
-            desc="Se riusciamo a incastrare le date."
-            onClick={() => setPeriod("thisMonth")}
+            desc="Preferibilmente entro fine mese."
+            onClick={() => setTimeframe("this_month")}
           />
           <ChoiceCard
-            selected={period === "nextMonth"}
-            title="Mese prossimo"
-            desc="Opzione consigliata per organizzarsi bene."
-            onClick={() => setPeriod("nextMonth")}
+            selected={timeframe === "next_months"}
+            title="Mesi successivi"
+            desc="Anche nel prossimo periodo va bene."
+            onClick={() => setTimeframe("next_months")}
           />
           <ChoiceCard
-            selected={period === "twoThreeMonths"}
-            title="Tra 2–3 mesi"
-            desc="Programmazione con più margine."
-            onClick={() => setPeriod("twoThreeMonths")}
-          />
-          <ChoiceCard
-            selected={period === "toDefine"}
-            title="Da definire"
-            desc="Ne parliamo insieme."
-            onClick={() => setPeriod("toDefine")}
+            selected={timeframe === "specific_date"}
+            title="Data specifica"
+            desc="Ho una data precisa."
+            onClick={() => setTimeframe("specific_date")}
           />
         </div>
       </section>
 
-      {/* 3) Note */}
-      <section className="space-y-3">
-        <div className="space-y-1">
-          <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Note aggiuntive (facoltative)
-          </div>
-          <div className="text-[13.5px] text-[#6F6F6F]">
-            Es. vincoli orari, richieste o altro...
-          </div>
-        </div>
+      {timeframe === "specific_date" && (
+        <section className="space-y-2">
+          <div className="text-[13.5px] text-[#6F6F6F]">Seleziona una data</div>
+          <input
+            type="date"
+            value={specificDate}
+            onChange={(e) => setSpecificDate(e.target.value)}
+            className="w-full rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] px-5 py-4 text-[14.5px] leading-7 text-[#0F0F0F] focus:outline-none focus:ring-2 focus:ring-black/10"
+          />
+        </section>
+      )}
 
+      <section className="space-y-3">
+        <div className="text-[13.5px] text-[#6F6F6F]">Note periodo (facoltative)</div>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={5}
-          placeholder="Scrivi qui eventuali dettagli utili…"
+          placeholder="Vincoli, finestre orarie, preferenze…"
           className="w-full rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] px-5 py-4 text-[14.5px] leading-7 text-[#0F0F0F] placeholder:text-[#9A9A9A] focus:outline-none focus:ring-2 focus:ring-black/10"
         />
       </section>
 
-      {/* Footer */}
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
-          onClick={() => router.push("/brief/step-2")}
+          onClick={() => {
+            persist();
+            router.push("/brief/step-2");
+          }}
           className="rounded-lg px-5 py-3 text-sm text-[#0F0F0F] transition hover:opacity-80"
           style={{
             border: "1px solid rgba(15,15,15,0.12)",
@@ -198,13 +178,14 @@ export default function BriefStep3Page() {
         <button
           type="button"
           disabled={!canContinue}
-          onClick={() => router.push("/brief/step-4")}
+          onClick={() => {
+            persist();
+            router.push("/brief/step-4");
+          }}
           className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
           style={{
             background: "#0F0F0F",
-            boxShadow: canContinue
-              ? "0 14px 40px rgba(15,15,15,0.18)"
-              : "none",
+            boxShadow: canContinue ? "0 14px 40px rgba(15,15,15,0.18)" : "none",
           }}
         >
           Continua
