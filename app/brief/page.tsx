@@ -76,18 +76,14 @@ export default function BriefPage() {
         <div className="mx-auto flex w-full max-w-[760px] items-center justify-between px-5 py-4">
           <div className="flex items-center gap-4">
             {/* Logo */}
-<Image
-  src="/logo.png"
-  alt="Piero Beghi Photography"
-  width={260}
-  height={60}
-  priority
-/>
-
-            {/* micro accent */}
-            <div className="hidden md:block h-5 w-px bg-[#DED9CF]" />
-            <div className="hidden md:block text-xs text-[#6F6F6F]">
-              Creative Brief
+            <div className="shrink-0">
+              <Image
+                src="/logo.png"
+                alt="Piero Beghi Photography"
+                width={260}
+                height={60}
+                priority
+              />
             </div>
           </div>
 
@@ -95,6 +91,7 @@ export default function BriefPage() {
             PASSO <span className="text-[#0F0F0F]/70">1</span> / 6
           </div>
         </div>
+
       </header>
 
       <main className="mx-auto w-full max-w-[760px] px-5 py-10 md:py-14">
@@ -105,13 +102,17 @@ export default function BriefPage() {
               Raccontami cosa vuoi realizzare
             </h1>
             <p className="max-w-[62ch] text-[15.5px] leading-7 text-[#6F6F6F]">
-              Queste informazioni mi permettono di preparare lo shooting nel modo più adatto a te.
+              Queste informazioni mi permettono di preparare lo shooting nel modo
+              più adatto a te.
             </p>
 
             {/* linea accent */}
             <div className="pt-2">
               <div className="h-px w-28 bg-[#DED9CF]" />
-              <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
+              <div
+                className="-mt-px h-[2px] w-10"
+                style={{ background: ACCENT }}
+              />
             </div>
           </div>
 
