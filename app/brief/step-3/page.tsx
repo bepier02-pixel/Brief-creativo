@@ -5,20 +5,19 @@ import { useRouter } from "next/navigation";
 
 const ACCENT = "#B89B5E";
 
-type DayPref = "sunMon" | "weekend" | "weekdays" | "flexible";
-type SessionType = "studio" | "outdoor" | "indoor" | "undecided";
+type DayPref = "sunday" | "monday";
+type PeriodPref = "thisMonth" | "nextMonth" | "twoThreeMonths" | "toDefine";
 
 export default function BriefStep3Page() {
   const router = useRouter();
 
-  const [session, setSession] = useState<SessionType | null>("studio");
-  const [days, setDays] = useState<DayPref | null>("sunMon");
-  const [area, setArea] = useState<string>("");
+  const [day, setDay] = useState<DayPref | null>(null);
+  const [period, setPeriod] = useState<PeriodPref | null>(null);
   const [notes, setNotes] = useState<string>("");
 
   const canContinue = useMemo(() => {
-    return Boolean(session && days && area.trim().length >= 2);
-  }, [session, days, area]);
+    return Boolean(day && period);
+  }, [day, period]);
 
   const ChoiceCard = ({
     selected,
@@ -82,12 +81,11 @@ export default function BriefStep3Page() {
       {/* Titolo */}
       <div className="space-y-3">
         <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
-          Organizziamo logistica e disponibilità
+          Disponibilità e periodo
         </h1>
         <p className="max-w-[75ch] text-[15.5px] leading-7 text-[#6F6F6F]">
           Lavoro prevalentemente in studio. Di norma gli shooting li tengo la
-          domenica e il lunedì, ma possiamo valutare anche altri giorni.
-          Per distanze maggiori ci accordiamo insieme.
+          domenica e il lunedì. Fammi sapere cosa preferisci.
         </p>
 
         {/* linea accent */}
@@ -97,118 +95,87 @@ export default function BriefStep3Page() {
         </div>
       </div>
 
-      {/* 1) Tipo sessione */}
+      {/* 1) Giorno */}
       <section className="space-y-4">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Preferisci studio o location?
+            Scegli il giorno
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Se non sei sicuro/a, va benissimo: lo definiamo insieme.
+            Seleziona quello che preferisci.
           </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <ChoiceCard
-            selected={session === "studio"}
-            title="Studio"
-            desc="Opzione consigliata: controllo totale su luce e set."
-            onClick={() => setSession("studio")}
+            selected={day === "sunday"}
+            title="Domenica"
+            desc="Disponibilità principale."
+            onClick={() => setDay("sunday")}
           />
           <ChoiceCard
-            selected={session === "outdoor"}
-            title="Esterni"
-            desc="Urbano o naturale, in base al mood."
-            onClick={() => setSession("outdoor")}
-          />
-          <ChoiceCard
-            selected={session === "indoor"}
-            title="Interni / location"
-            desc="Casa, hotel, spazi particolari (da valutare)."
-            onClick={() => setSession("indoor")}
-          />
-          <ChoiceCard
-            selected={session === "undecided"}
-            title="Non ho deciso"
-            desc="Valutiamolo insieme in base all’obiettivo."
-            onClick={() => setSession("undecided")}
+            selected={day === "monday"}
+            title="Lunedì"
+            desc="Disponibilità principale."
+            onClick={() => setDay("monday")}
           />
         </div>
       </section>
 
-      {/* 2) Giorni preferiti */}
+      {/* 2) Periodo */}
       <section className="space-y-4">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Giorni preferiti
+            In quale periodo vorresti farlo?
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Indica la tua disponibilità: aiuta a trovare la data più adatta.
+            Anche una stima va benissimo.
           </div>
         </div>
 
-        <div className="grid gap-4">
+        <div className="grid gap-4 md:grid-cols-2">
           <ChoiceCard
-            selected={days === "sunMon"}
-            title="Domenica / Lunedì"
-            desc="Preferenza ideale per organizzare lo shooting."
-            onClick={() => setDays("sunMon")}
+            selected={period === "thisMonth"}
+            title="Questo mese"
+            desc="Se riusciamo a incastrare le date."
+            onClick={() => setPeriod("thisMonth")}
           />
           <ChoiceCard
-            selected={days === "weekend"}
-            title="Weekend"
-            desc="Se ti è più comodo/a, valutiamo anche il sabato."
-            onClick={() => setDays("weekend")}
+            selected={period === "nextMonth"}
+            title="Mese prossimo"
+            desc="Opzione consigliata per organizzarsi bene."
+            onClick={() => setPeriod("nextMonth")}
           />
           <ChoiceCard
-            selected={days === "weekdays"}
-            title="In settimana"
-            desc="Possibile in base a disponibilità e organizzazione."
-            onClick={() => setDays("weekdays")}
+            selected={period === "twoThreeMonths"}
+            title="Tra 2–3 mesi"
+            desc="Programmazione con più margine."
+            onClick={() => setPeriod("twoThreeMonths")}
           />
           <ChoiceCard
-            selected={days === "flexible"}
-            title="Flessibile"
-            desc="Mi adatto: scegliamo insieme la soluzione migliore."
-            onClick={() => setDays("flexible")}
+            selected={period === "toDefine"}
+            title="Da definire"
+            desc="Ne parliamo insieme."
+            onClick={() => setPeriod("toDefine")}
           />
         </div>
       </section>
 
-      {/* 3) Zona */}
+      {/* 3) Note */}
       <section className="space-y-3">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Città / zona di riferimento
+            Note aggiuntive (facoltative)
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Scrivi l’area in cui ti trovi o dove vorresti fare lo shooting.
-          </div>
-        </div>
-
-        <input
-          value={area}
-          onChange={(e) => setArea(e.target.value)}
-          placeholder="Es. città, zona o provincia"
-          className="w-full rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] px-5 py-4 text-[14.5px] text-[#0F0F0F] placeholder:text-[#9A9A9A] focus:outline-none focus:ring-2 focus:ring-black/10"
-        />
-      </section>
-
-      {/* 4) Note */}
-      <section className="space-y-3">
-        <div className="space-y-1">
-          <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Note logistiche (facoltative)
-          </div>
-          <div className="text-[13.5px] text-[#6F6F6F]">
-            Es. vincoli orari, distanze, disponibilità particolari, richieste.
+            Es. vincoli orari, richieste o altro...
           </div>
         </div>
 
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          rows={4}
+          rows={5}
           placeholder="Scrivi qui eventuali dettagli utili…"
           className="w-full rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] px-5 py-4 text-[14.5px] leading-7 text-[#0F0F0F] placeholder:text-[#9A9A9A] focus:outline-none focus:ring-2 focus:ring-black/10"
         />
