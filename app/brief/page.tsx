@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 type Purpose = "personal" | "casting";
@@ -73,81 +72,53 @@ export default function BriefPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F4EF] text-[#0F0F0F]">
-      {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-[#DED9CF] bg-[#F6F4EF]/90 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-[760px] items-center justify-between px-5 py-5">
-          <div className="shrink-0">
-            <Image
-              src="/logo.png"
-              alt="Piero Beghi Photography"
-              width={260}
-              height={60}
-              priority
-            />
-          </div>
+    <div className="space-y-8">
+      {/* Titolo */}
+      <div className="space-y-3">
+        <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
+          Raccontami cosa vuoi realizzare
+        </h1>
+        <p className="max-w-[62ch] text-[15.5px] leading-7 text-[#6F6F6F]">
+          Queste informazioni mi permettono di preparare lo shooting nel modo più
+          adatto a te.
+        </p>
 
-          <div className="text-xs tracking-wide text-[#7A7A7A]">
-            PASSO <span className="text-[#0F0F0F]/70">1</span> / 6
-          </div>
+        {/* linea accent */}
+        <div className="pt-2">
+          <div className="h-px w-28 bg-[#DED9CF]" />
+          <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
         </div>
-      </header>
+      </div>
 
-      <main className="mx-auto w-full max-w-[760px] px-5 py-10 md:py-14">
-        <div className="space-y-8">
-          {/* Titolo */}
-          <div className="space-y-3">
-            <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
-              Raccontami cosa vuoi realizzare
-            </h1>
-            <p className="max-w-[62ch] text-[15.5px] leading-7 text-[#6F6F6F]">
-              Queste informazioni mi permettono di preparare lo shooting nel modo
-              più adatto a te.
-            </p>
+      {/* Cards */}
+      <div className="grid gap-4">
+        <Card
+          value="personal"
+          title="Shooting personale"
+          desc="Per raccontare te stessa, la tua immagine, un momento personale o creativo."
+        />
+        <Card
+          value="casting"
+          title="Casting / percorso di valutazione"
+          desc="Per chi vuole mettersi alla prova su un set, ricevere un feedback professionale e capire, insieme, se esistono doti e possibilità di crescita come fotomodella."
+        />
+      </div>
 
-            {/* linea accent */}
-            <div className="pt-2">
-              <div className="h-px w-28 bg-[#DED9CF]" />
-              <div
-                className="-mt-px h-[2px] w-10"
-                style={{ background: ACCENT }}
-              />
-            </div>
-          </div>
-
-          {/* Cards */}
-          <div className="grid gap-4">
-            <Card
-              value="personal"
-              title="Shooting personale"
-              desc="Per raccontare te stessa, la tua immagine, un momento personale o creativo."
-            />
-            <Card
-              value="casting"
-              title="Casting / percorso di valutazione"
-              desc="Per chi vuole mettersi alla prova su un set, ricevere un feedback professionale e capire, insieme, se esistono doti e possibilità di crescita come fotomodella."
-            />
-          </div>
-
-          {/* Footer */}
-          <div className="flex justify-end pt-2">
-            <button
-              type="button"
-              disabled={!purpose}
-              onClick={() => router.push("/brief/step-2")}
-              className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
-              style={{
-                background: "#0F0F0F",
-                boxShadow: purpose
-                  ? "0 14px 40px rgba(15,15,15,0.18)"
-                  : "none",
-              }}
-            >
-              Continua
-            </button>
-          </div>
-        </div>
-      </main>
+      {/* Footer */}
+      <div className="flex justify-end pt-2">
+        <button
+          type="button"
+          disabled={!purpose}
+          onClick={() => router.push("/brief/step-2")}
+          className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
+          style={{
+            background: "#0F0F0F",
+            boxShadow: purpose ? "0 14px 40px rgba(15,15,15,0.18)" : "none",
+          }}
+        >
+          Continua
+        </button>
+      </div>
     </div>
   );
 }
