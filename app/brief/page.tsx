@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -28,6 +27,7 @@ export default function BriefPage() {
       <button
         type="button"
         onClick={() => setPurpose(value)}
+        aria-pressed={selected}
         className={[
           "w-full text-left rounded-[20px] border px-6 py-6 transition",
           "bg-[#FBFAF7] border-[#DED9CF] hover:border-black/25",
