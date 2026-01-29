@@ -17,9 +17,6 @@ export default function BriefStep2Page() {
   const [timing, setTiming] = useState<Timing | null>(null);
   const [mood, setMood] = useState<string>("");
 
-  // Allegati (preview locale)
-  const [files, setFiles] = useState<File[]>([]);
-
   const canContinue = useMemo(() => {
     return Boolean(usage && location && timing);
   }, [usage, location, timing]);
@@ -133,7 +130,7 @@ export default function BriefStep2Page() {
           <ChoiceCard
             selected={usage === "other"}
             title="Altro"
-            desc="Se l’obiettivo è diverso, descrivilo nelle note sotto."
+            desc="Se l’obiettivo è diverso, descrivilo nelle note qui sotto."
             onClick={() => setUsage("other")}
           />
         </div>
@@ -211,79 +208,25 @@ export default function BriefStep2Page() {
         </div>
       </section>
 
-      {/* 4) Mood / riferimenti */}
-      <section className="space-y-4">
+      {/* 4) Mood */}
+      <section className="space-y-3">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Mood, stile o riferimenti (facoltativo)
+            Mood e stile (facoltativo)
           </div>
           <div className="text-[13.5px] text-[#6F6F6F]">
-            Puoi descrivere lo stile che ami. Se vuoi, puoi anche caricare alcune
-            immagini di riferimento.
+            Se ti va, descrivi l’atmosfera che immagini (luce, emozione, energia,
+            tipo di immagini).
           </div>
         </div>
 
         <textarea
           value={mood}
           onChange={(e) => setMood(e.target.value)}
-          rows={5}
-          placeholder="Esempio: luce morbida, mood editoriale, toni caldi…"
+          rows={6}
+          placeholder="Esempio: luce morbida, mood editoriale, toni caldi, naturale…"
           className="w-full rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] px-5 py-4 text-[14.5px] leading-7 text-[#0F0F0F] placeholder:text-[#9A9A9A] focus:outline-none focus:ring-2 focus:ring-black/10"
         />
-
-        {/* Upload immagini (preview locale) */}
-        <div className="space-y-2">
-          <div className="text-[13.5px] text-[#6F6F6F]">
-            Allegati (facoltativi) — immagini JPG/PNG/WEBP
-          </div>
-
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(e) => {
-              const list = Array.from(e.target.files ?? []);
-              setFiles(list);
-            }}
-            className="block w-full text-sm text-[#6F6F6F]
-              file:mr-4 file:rounded-lg file:border-0
-              file:bg-[#0F0F0F] file:px-4 file:py-2
-              file:text-sm file:text-[#F6F4EF]
-              hover:file:opacity-90"
-          />
-
-          {files.length > 0 && (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {files.slice(0, 6).map((f) => {
-                const url = URL.createObjectURL(f);
-                return (
-                  <div
-                    key={f.name}
-                    className="rounded-[18px] border border-[#DED9CF] bg-[#FBFAF7] p-3"
-                  >
-                    {/* preview */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={url}
-                      alt={f.name}
-                      className="h-40 w-full rounded-[14px] object-cover"
-                      onLoad={() => URL.revokeObjectURL(url)}
-                    />
-                    <div className="mt-2 truncate text-xs text-[#6F6F6F]">
-                      {f.name}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {files.length > 6 && (
-            <div className="text-xs text-[#6F6F6F]">
-              Mostro le prime 6 immagini. Le altre verranno comunque considerate.
-            </div>
-          )}
-        </div>
       </section>
 
       {/* Footer */}
