@@ -7,19 +7,17 @@ const ACCENT = "#B89B5E";
 
 type Usage = "social" | "portfolio" | "personalBrand" | "other";
 type LocationPref = "studio" | "outdoor" | "undecided";
-type Timing = "asap" | "2weeks" | "1month" | "flexible";
 
 export default function BriefStep2Page() {
   const router = useRouter();
 
   const [usage, setUsage] = useState<Usage | null>(null);
   const [location, setLocation] = useState<LocationPref | null>(null);
-  const [timing, setTiming] = useState<Timing | null>(null);
   const [mood, setMood] = useState<string>("");
 
   const canContinue = useMemo(() => {
-    return Boolean(usage && location && timing);
-  }, [usage, location, timing]);
+    return Boolean(usage && location);
+  }, [usage, location]);
 
   const ChoiceCard = ({
     selected,
@@ -169,46 +167,7 @@ export default function BriefStep2Page() {
         </div>
       </section>
 
-      {/* 3) Tempistiche */}
-      <section className="space-y-4">
-        <div className="space-y-1">
-          <div className="text-[15px] font-medium text-[#0F0F0F]">
-            Tempistiche desiderate
-          </div>
-          <div className="text-[13.5px] text-[#6F6F6F]">
-            Anche un’indicazione approssimativa va benissimo.
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <ChoiceCard
-            selected={timing === "asap"}
-            title="Il prima possibile"
-            desc="Ho urgenza o una scadenza vicina."
-            onClick={() => setTiming("asap")}
-          />
-          <ChoiceCard
-            selected={timing === "2weeks"}
-            title="Entro 2 settimane"
-            desc="Vorrei organizzarmi a breve."
-            onClick={() => setTiming("2weeks")}
-          />
-          <ChoiceCard
-            selected={timing === "1month"}
-            title="Entro 1 mese"
-            desc="Programmiamo con calma."
-            onClick={() => setTiming("1month")}
-          />
-          <ChoiceCard
-            selected={timing === "flexible"}
-            title="Flessibile"
-            desc="Sono aperta/o a diverse date."
-            onClick={() => setTiming("flexible")}
-          />
-        </div>
-      </section>
-
-      {/* 4) Mood */}
+      {/* 3) Mood */}
       <section className="space-y-3">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
