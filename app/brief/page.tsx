@@ -71,6 +71,15 @@ export default function BriefPage() {
     );
   };
 
+  function onContinue() {
+    if (!purpose) return;
+    if (purpose === "casting") {
+      router.push("/casting");
+      return;
+    }
+    router.push("/brief/step-2");
+  }
+
   return (
     <div className="space-y-8">
       {/* Titolo */}
@@ -109,7 +118,7 @@ export default function BriefPage() {
         <button
           type="button"
           disabled={!purpose}
-          onClick={() => router.push("/brief/step-2")}
+          onClick={onContinue}
           className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
           style={{
             background: "#0F0F0F",
