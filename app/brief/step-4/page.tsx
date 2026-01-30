@@ -123,7 +123,7 @@ export default function BriefStep4Page() {
     setConsent(false);
 
     // 5) esco dal flusso (al rientro sarà pulito)
-    router.push("/brief");
+    router.push("/brief/success");
   }
 
   return (

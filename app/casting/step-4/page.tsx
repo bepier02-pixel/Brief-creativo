@@ -104,7 +104,7 @@ export default function CastingStep4Page() {
     setConsent(false);
 
     // esco dal flusso
-    router.push("/brief");
+    router.push("/casting/success");
   }
 
   return (
