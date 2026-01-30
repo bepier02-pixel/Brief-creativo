@@ -20,53 +20,68 @@ export default function BriefStep4Page() {
   }, [fullName, email, consent]);
 
   function buildMailto() {
-    const draft: any = loadBriefDraft();
+  const draft: any = loadBriefDraft();
 
-    const usage = draft?.step2?.usage ?? "";
-    const location = draft?.step2?.location ?? "";
-    const mood = draft?.step2?.mood ?? "";
+  const usage = draft?.step2?.usage ?? "";
+  const location = draft?.step2?.location ?? "";
+  const mood = draft?.step2?.mood ?? "";
 
-    const timeframe = draft?.step3?.timeframe ?? "";
-    const specificDate = draft?.step3?.specificDate ?? "";
-    const periodNotes = draft?.step3?.notes ?? "";
-    const availability = draft?.step3?.availability ?? "";
+  const timeframeRaw = draft?.step3?.timeframe ?? "";
+  const availabilityRaw = draft?.step3?.availability ?? "";
+  const periodNotes = draft?.step3?.notes ?? "";
 
-    const subject = `Brief fotografico — ${fullName}`.trim();
+  // 🔹 Traduzioni ITA
+  const timeframeMap: Record<string, string> = {
+    this_month: "Questo mese",
+    next_months: "Nei prossimi mesi",
+    specific_date: "Data specifica",
+  };
 
-    const lines: string[] = [
-      "NUOVO BRIEF FOTOGRAFICO",
-      "",
-      "CONTATTI",
-      `Nome: ${fullName}`,
-      `Email: ${email}`,
-      `Telefono: ${phone || "-"}`,
-      "",
-      "BRIEF",
-      `Utilizzo: ${usage || "-"}`,
-      `Dove: ${location || "-"}`,
-      `Mood/Stile: ${mood || "-"}`,
-      "",
-      "TEMPISTICHE (Step 3)",
-      `Periodo: ${timeframe || "-"}`,
-      `Data specifica: ${specificDate || "-"}`,
-      `Note periodo: ${periodNotes || "-"}`,
-      "",
-      "DISPONIBILITÀ (Step 3)",
-      `Giorni: ${availability || "-"}`,
-      "",
-      "NOTE FINALI",
-      finalNotes || "-",
-      "",
-    ];
+  const availabilityMap: Record<string, string> = {
+    sunday: "Domenica",
+    monday: "Lunedì",
+    both: "Domenica o Lunedì",
+  };
 
-    const body = lines.join("\n");
+  const timeframe = timeframeMap[timeframeRaw] ?? "-";
+  const availability = availabilityMap[availabilityRaw] ?? "-";
 
-    const to = "bepier02@gmail.com";
+  const subject = `Brief fotografico — ${fullName}`.trim();
 
-    return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-  }
+  const lines: string[] = [
+    "NUOVO BRIEF FOTOGRAFICO",
+    "",
+    "CONTATTI",
+    `Nome: ${fullName}`,
+    `Email: ${email}`,
+    `Telefono: ${phone || "-"}`,
+    "",
+    "BRIEF",
+    `Utilizzo: ${usage || "-"}`,
+    `Dove: ${location || "-"}`,
+    `Mood / Stile: ${mood || "-"}`,
+    "",
+    "TEMPISTICHE",
+    `Periodo: ${timeframe}`,
+    periodNotes ? `Note: ${periodNotes}` : "",
+    "",
+    "DISPONIBILITÀ",
+    `Giorni: ${availability}`,
+    "",
+    "NOTE FINALI",
+    finalNotes || "-",
+    "",
+  ].filter(Boolean); // rimuove righe vuote inutili
+
+  const body = lines.join("\n");
+
+  const to = "bepier02@gmail.com"; // <-- tua mail
+
+  return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;
+}
+
 
   function onSend() {
     if (!canSend) return;
