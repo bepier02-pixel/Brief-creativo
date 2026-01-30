@@ -7,6 +7,7 @@ import { loadBriefDraft, updateBriefDraft } from "../_lib/briefStore";
 const ACCENT = "#B89B5E";
 
 type Timeframe = "this_month" | "next_months" | "specific_date";
+type Availability = "sunday" | "monday" | "both";
 
 export default function BriefStep3Page() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function BriefStep3Page() {
   const [timeframe, setTimeframe] = useState<Timeframe | null>(null);
   const [specificDate, setSpecificDate] = useState("");
   const [notes, setNotes] = useState("");
+  const [availability, setAvailability] = useState<Availability | null>(null);
 
   useEffect(() => {
     const draft = loadBriefDraft();
@@ -21,14 +23,16 @@ export default function BriefStep3Page() {
       setTimeframe(draft.step3.timeframe ?? null);
       setSpecificDate(draft.step3.specificDate ?? "");
       setNotes(draft.step3.notes ?? "");
+      setAvailability(draft.step3.availability ?? null);
     }
   }, []);
 
   const canContinue = useMemo(() => {
     if (!timeframe) return false;
+    if (!availability) return false;
     if (timeframe === "specific_date") return Boolean(specificDate);
     return true;
-  }, [timeframe, specificDate]);
+  }, [timeframe, availability, specificDate]);
 
   function persist() {
     updateBriefDraft({
@@ -36,6 +40,7 @@ export default function BriefStep3Page() {
         timeframe,
         specificDate,
         notes,
+        availability,
       },
     });
   }
@@ -101,10 +106,10 @@ export default function BriefStep3Page() {
     <div className="space-y-10">
       <div className="space-y-3">
         <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
-          Tempistiche
+          Tempistiche e disponibilità
         </h1>
         <p className="max-w-[70ch] text-[15.5px] leading-7 text-[#6F6F6F]">
-          Seleziona il periodo preferito. È solo un’indicazione, poi ci organizziamo insieme.
+          Seleziona periodo e giorni disponibili. È un’indicazione, poi ci organizziamo insieme.
         </p>
 
         <div className="pt-2">
@@ -113,7 +118,10 @@ export default function BriefStep3Page() {
         </div>
       </div>
 
+      {/* Periodo */}
       <section className="space-y-4">
+        <div className="text-[15px] font-medium text-[#0F0F0F]">Periodo</div>
+
         <div className="grid gap-4 md:grid-cols-3">
           <ChoiceCard
             selected={timeframe === "this_month"}
@@ -148,6 +156,33 @@ export default function BriefStep3Page() {
         </section>
       )}
 
+      {/* Disponibilità */}
+      <section className="space-y-4">
+        <div className="text-[15px] font-medium text-[#0F0F0F]">Disponibilità (giorni)</div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <ChoiceCard
+            selected={availability === "sunday"}
+            title="Domenica"
+            desc="Preferisco la domenica."
+            onClick={() => setAvailability("sunday")}
+          />
+          <ChoiceCard
+            selected={availability === "monday"}
+            title="Lunedì"
+            desc="Preferisco il lunedì."
+            onClick={() => setAvailability("monday")}
+          />
+          <ChoiceCard
+            selected={availability === "both"}
+            title="Entrambi"
+            desc="Va bene domenica o lunedì."
+            onClick={() => setAvailability("both")}
+          />
+        </div>
+      </section>
+
+      {/* Note */}
       <section className="space-y-3">
         <div className="text-[13.5px] text-[#6F6F6F]">Note periodo (facoltative)</div>
         <textarea
@@ -159,6 +194,7 @@ export default function BriefStep3Page() {
         />
       </section>
 
+      {/* Footer */}
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
