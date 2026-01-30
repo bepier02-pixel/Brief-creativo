@@ -16,7 +16,7 @@ export type BriefDraft = {
   step3?: Step3Draft;
 };
 
-const KEY = "brief_draft_v1";
+const KEY = "brief_draft_v2";
 
 export function loadBriefDraft(): BriefDraft {
   if (typeof window === "undefined") return {};
