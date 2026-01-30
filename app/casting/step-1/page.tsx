@@ -69,7 +69,7 @@ export default function CastingStep1Page() {
           />
         </Field>
 
-        <Field label="Età *">
+        <Field label="Eta *">
           <input
             value={age}
             onChange={(e) => setAge(e.target.value)}
@@ -83,12 +83,12 @@ export default function CastingStep1Page() {
           <input
             value={size}
             onChange={(e) => setSize(e.target.value)}
-            placeholder="Es. 38 / 40 / 46
+            placeholder="Es. 40 / S / 26"
             className={input}
           />
         </Field>
 
-        <Field label="Città *">
+        <Field label="Citta *">
           <input
             value={city}
             onChange={(e) => setCity(e.target.value)}
@@ -147,7 +147,13 @@ export default function CastingStep1Page() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="space-y-2">
       <div className="text-[13.5px] text-[#6F6F6F]">{label}</div>
