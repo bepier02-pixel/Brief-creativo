@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadCastingDraft, updateCastingDraft } from "../_lib/castingStore";
 
 const ACCENT = "#B89B5E";
 
@@ -9,10 +10,20 @@ type Experience = "none" | "some" | "good" | "performance";
 
 export default function CastingStep2Page() {
   const router = useRouter();
-
   const [experience, setExperience] = useState<Experience | null>(null);
 
+  useEffect(() => {
+    const draft = loadCastingDraft();
+    if (draft.step2?.experience) {
+      setExperience(draft.step2.experience);
+    }
+  }, []);
+
   const canContinue = useMemo(() => Boolean(experience), [experience]);
+
+  function persist() {
+    updateCastingDraft({ step2: { experience } });
+  }
 
   const Card = ({
     value,
@@ -73,7 +84,6 @@ export default function CastingStep2Page() {
 
   return (
     <div className="space-y-10">
-      {/* Titolo */}
       <div className="space-y-3">
         <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
           Esperienza davanti alla camera
@@ -83,21 +93,15 @@ export default function CastingStep2Page() {
           prova.
         </p>
 
-        {/* linea accent */}
         <div className="pt-2">
           <div className="h-px w-28 bg-[#DED9CF]" />
           <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
         </div>
       </div>
 
-      {/* Cards */}
       <section className="space-y-4">
         <div className="grid gap-4">
-          <Card
-            value="none"
-            title="Nessuna"
-            desc="È la prima volta (o quasi)."
-          />
+          <Card value="none" title="Nessuna" desc="È la prima volta (o quasi)." />
           <Card
             value="some"
             title="Qualche shooting"
@@ -116,11 +120,13 @@ export default function CastingStep2Page() {
         </div>
       </section>
 
-      {/* Footer */}
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
-          onClick={() => router.push("/casting/step-1")}
+          onClick={() => {
+            persist();
+            router.push("/casting/step-1");
+          }}
           className="rounded-lg px-5 py-3 text-sm text-[#0F0F0F] transition hover:opacity-80"
           style={{
             border: "1px solid rgba(15,15,15,0.12)",
@@ -133,7 +139,10 @@ export default function CastingStep2Page() {
         <button
           type="button"
           disabled={!canContinue}
-          onClick={() => router.push("/casting/step-3")}
+          onClick={() => {
+            persist();
+            router.push("/casting/step-3");
+          }}
           className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
           style={{
             background: "#0F0F0F",

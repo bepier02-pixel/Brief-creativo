@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadCastingDraft, updateCastingDraft } from "../_lib/castingStore";
 
 const ACCENT = "#B89B5E";
 
@@ -15,7 +16,20 @@ export default function CastingStep3Page() {
   const [style, setStyle] = useState<Style | null>(null);
   const [notes, setNotes] = useState("");
 
+  useEffect(() => {
+    const draft = loadCastingDraft();
+    if (draft.step3) {
+      setComfort(draft.step3.comfort ?? null);
+      setStyle(draft.step3.style ?? null);
+      setNotes(draft.step3.notes ?? "");
+    }
+  }, []);
+
   const canContinue = useMemo(() => Boolean(comfort && style), [comfort, style]);
+
+  function persist() {
+    updateCastingDraft({ step3: { comfort, style, notes } });
+  }
 
   const Card = ({
     selected,
@@ -76,7 +90,6 @@ export default function CastingStep3Page() {
 
   return (
     <div className="space-y-10">
-      {/* Titolo */}
       <div className="space-y-3">
         <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
           Stile e approccio
@@ -86,14 +99,12 @@ export default function CastingStep3Page() {
           rappresenta di più.
         </p>
 
-        {/* linea accent */}
         <div className="pt-2">
           <div className="h-px w-28 bg-[#DED9CF]" />
           <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
         </div>
       </div>
 
-      {/* Comfort */}
       <section className="space-y-4">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
@@ -132,7 +143,6 @@ export default function CastingStep3Page() {
         </div>
       </section>
 
-      {/* Stile */}
       <section className="space-y-4">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
@@ -171,7 +181,6 @@ export default function CastingStep3Page() {
         </div>
       </section>
 
-      {/* Note */}
       <section className="space-y-3">
         <div className="space-y-1">
           <div className="text-[15px] font-medium text-[#0F0F0F]">
@@ -191,11 +200,13 @@ export default function CastingStep3Page() {
         />
       </section>
 
-      {/* Footer */}
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
-          onClick={() => router.push("/casting/step-2")}
+          onClick={() => {
+            persist();
+            router.push("/casting/step-2");
+          }}
           className="rounded-lg px-5 py-3 text-sm text-[#0F0F0F] transition hover:opacity-80"
           style={{
             border: "1px solid rgba(15,15,15,0.12)",
@@ -208,7 +219,10 @@ export default function CastingStep3Page() {
         <button
           type="button"
           disabled={!canContinue}
-          onClick={() => router.push("/casting/step-4")}
+          onClick={() => {
+            persist();
+            router.push("/casting/step-4");
+          }}
           className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
           style={{
             background: "#0F0F0F",

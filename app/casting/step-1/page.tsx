@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadCastingDraft, updateCastingDraft } from "../_lib/castingStore";
 
 const ACCENT = "#B89B5E";
 
@@ -14,6 +15,17 @@ export default function CastingStep1Page() {
   const [instagram, setInstagram] = useState("");
   const [city, setCity] = useState("");
 
+  useEffect(() => {
+    const draft = loadCastingDraft();
+    if (draft.step1) {
+      setName(draft.step1.name ?? "");
+      setAge(draft.step1.age ?? "");
+      setSize(draft.step1.size ?? "");
+      setInstagram(draft.step1.instagram ?? "");
+      setCity(draft.step1.city ?? "");
+    }
+  }, []);
+
   const canContinue = useMemo(() => {
     return Boolean(
       name.trim() &&
@@ -24,9 +36,14 @@ export default function CastingStep1Page() {
     );
   }, [name, age, size, instagram, city]);
 
+  function persist() {
+    updateCastingDraft({
+      step1: { name, age, size, instagram, city },
+    });
+  }
+
   return (
     <div className="space-y-10">
-      {/* Titolo */}
       <div className="space-y-3">
         <h1 className="text-4xl leading-tight tracking-tight text-[#0F0F0F]">
           Profilo base
@@ -36,14 +53,12 @@ export default function CastingStep1Page() {
           profilo.
         </p>
 
-        {/* linea accent */}
         <div className="pt-2">
           <div className="h-px w-28 bg-[#DED9CF]" />
           <div className="-mt-px h-[2px] w-10" style={{ background: ACCENT }} />
         </div>
       </div>
 
-      {/* Campi */}
       <section className="grid gap-4 md:grid-cols-2">
         <Field label="Nome *">
           <input
@@ -68,7 +83,7 @@ export default function CastingStep1Page() {
           <input
             value={size}
             onChange={(e) => setSize(e.target.value)}
-            placeholder="Es. 40 / S / 26"
+            placeholder="Es. 38 / 40 / 46
             className={input}
           />
         </Field>
@@ -88,17 +103,19 @@ export default function CastingStep1Page() {
           <input
             value={instagram}
             onChange={(e) => setInstagram(e.target.value)}
-            placeholder="@username o link profilo"
+            placeholder="@username"
             className={input}
           />
         </Field>
       </section>
 
-      {/* Footer */}
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
-          onClick={() => router.push("/casting")}
+          onClick={() => {
+            persist();
+            router.push("/casting");
+          }}
           className="rounded-lg px-5 py-3 text-sm text-[#0F0F0F] transition hover:opacity-80"
           style={{
             border: "1px solid rgba(15,15,15,0.12)",
@@ -111,7 +128,10 @@ export default function CastingStep1Page() {
         <button
           type="button"
           disabled={!canContinue}
-          onClick={() => router.push("/casting/step-2")}
+          onClick={() => {
+            persist();
+            router.push("/casting/step-2");
+          }}
           className="rounded-lg px-6 py-3 text-sm text-[#F6F4EF] transition disabled:opacity-40"
           style={{
             background: "#0F0F0F",
@@ -127,15 +147,7 @@ export default function CastingStep1Page() {
   );
 }
 
-/* ---------- UI helpers ---------- */
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="space-y-2">
       <div className="text-[13.5px] text-[#6F6F6F]">{label}</div>
